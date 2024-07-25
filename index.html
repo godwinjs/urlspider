@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,400;0,500;0,700;1,200;1,300&display=swap" rel="stylesheet">
+    <script  src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <title>Web Scraper With Javascript</title>
+    <style>
+        * {
+            border: 0;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all .5s;
+        }
+        :root {
+            --dur: 2s;
+            --bg: #e3e4e8;
+            --fg: #17181c;
+            font-size: calc(12px + (24 - 12)*(100vw - 320px)/(2560 - 320));
+        }
+        body {
+            font-family: "Nunito", sans-sarif;
+            color: var(--fg);
+            font: 1em/1.5 sans-serif;
+            overflow: hidden;
+            box-sizing: border-box;
+            animation: pulse 3s;
+
+            width: 100%;
+            height: 100vh;
+            align-items: center; 
+            
+        }
+
+        .btn2{
+            text-align: center;
+        }
+
+        .hide{
+            visibility: hidden;
+        }
+        .div{
+            position: relative;
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            text-align: center;
+            padding:  5% ;
+            margin: 12% 5%;
+            background: linear-gradient(180deg, rgb(240, 104, 224),rgb(240, 169, 232));
+            border-radius: 1rem;
+            transform: translate(0%);
+            opacity: 1;
+            animation: slideLeft 1s;
+            transition: all 1s;
+        }
+        .show{
+            display: flex;
+        }
+        .div:hover{
+            background: linear-gradient(180deg, #eee, #fff);
+            box-shadow: 3px 2px 19px -9px black;
+        }
+        .tick{
+            display: inline;
+        }
+        .inp{
+            margin-top: 3px;
+        }
+        .tickContainer{
+            margin: 10px 0;
+        }
+        .label{
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .button{
+            margin-top: 1.5rem;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border: transparent;
+            border-radius: 5rem;
+            background-color: rgb(192, 221, 192);
+            transition: background-color .5s;
+            box-shadow: 3px 2px 19px -9px black;
+        }
+        .button:hover{
+            cursor: pointer;
+            background-color: rgb(69, 204, 69);
+        }        
+        .clicked{
+            transform: scale(.95);
+            box-shadow: none;
+        }
+        .input{
+            padding: 1rem;
+            border: transparent;
+            font-size: 1.1rem;
+            border-radius: 1rem;
+            background-color: #eee;
+        }
+
+
+        .water{
+            display: none;
+            width:400px;
+            height: 400px;
+            background-color: skyblue;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: inset 0 0 30px 0 rgba(0,0,0,.5), 0 4px 10px 0 rgba(0,0,0,.5);
+            overflow: hidden;
+            margin: auto ;
+            margin-top: 1rem;
+        }
+        .show_water{
+            display: block;
+        }
+        .load_percent{
+            position: absolute;
+            z-index: 20000;
+            margin: 40%;
+            font-size: 3rem;
+
+        }
+        .water:before, .water:after{
+            content:'';
+            position: absolute;
+            width: 650px;
+            height: 650px;
+            top:-150px;
+            background-color: #fff;
+            transition: width .2s, height .2s;
+        }
+        .water:before{
+            border-radius: 45%;
+            background:rgba(255,255,255,.7);
+            animation:wave 5s linear infinite;
+        }
+        .water:after{
+            border-radius: 35%;
+            background:rgba(255,255,255,.3);
+            animation:wave 5s linear infinite;
+        }
+        @keyframes wave{
+            0%{
+                transform: rotate(0);
+            }
+            100%{
+                transform: rotate(360deg);
+            }
+        }
+
+
+        @keyframes pulse {
+            0% {
+                background: var(--fg);
+            }
+            100% {
+                background: var(--bg);
+            }
+        }
+        @keyframes slideLeft {
+            from {
+                transform: translate(300%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(0%);
+                opacity: 1;
+            }
+        }
+    </style>
+</head> 
+<body>
+    
+    <div class="water "><div class="load_percent">0%</div></div>
+
+    <div class="div show">
+        <label class="label" for="crawUrl">Input your url here</label>
+        <!-- value="https://linkedin.com"  value="https://www.amazon.com/s?i=electronics&dc&qid=1635879281&ref=sr_nr_i_14"-->
+        <input class="url input" type="url" name="crawlUrl"  placeholder="Paste Url here: https://www.yoururl.com/">
+        
+        <span class="tickContainer">
+            <label class="tick" for="crawlPage">crawl only this page</label>
+            <input class="tick inp" onclick="getTick()" type="checkbox" name="crawlPage" >
+        </span>
+        <button class="button" onclick="getUrl()" type="submit">Get Filters</button>
+    </div>
+
+    <div class="btn2 hide">
+        <button class="button" type="submit">Download Available Filters</button>
+    </div>
+
+    <script type="text/javascript" src="/UrlSpider/index.js"></script>
+    <script type="text/javascript" src="/UrlSpider/crawler.js"></script>
+
+</body>
+</html>
